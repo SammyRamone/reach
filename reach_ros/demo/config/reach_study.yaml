@@ -2,6 +2,21 @@ optimization:
   radius: 0.2
   max_steps: 10
   step_improvement_threshold: 0.01
+  initial_seed:
+    - name: joint_s
+      position: 2.66
+    - name: joint_l
+      position: -1.54
+    - name: joint_e
+      position: -0.56
+    - name: joint_u
+      position: -2.20
+    - name: joint_r
+      position: -0.32
+    - name: joint_b
+      position: 1.81
+    - name: joint_t
+      position: 2.39
 
 ik_solver:
   name: MoveItIKSolver
