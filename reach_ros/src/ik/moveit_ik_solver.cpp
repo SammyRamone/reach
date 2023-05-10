@@ -40,7 +40,7 @@ using namespace std::placeholders;
 std::string MoveItIKSolver::COLLISION_OBJECT_NAME = "reach_object";
 
 MoveItIKSolver::MoveItIKSolver(moveit::core::RobotModelConstPtr model, const std::string& planning_group,
-                               double dist_threshold)
+                               double dist_threshold, bool use_approximate_solution)
   : model_(model), jmg_(model_->getJointModelGroup(planning_group)), distance_threshold_(dist_threshold)
 {
   if (!jmg_)
@@ -52,6 +52,8 @@ MoveItIKSolver::MoveItIKSolver(moveit::core::RobotModelConstPtr model, const std
   moveit_msgs::msg::PlanningScene scene_msg;
   scene_->getPlanningSceneMsg(scene_msg);
   scene_pub_->publish(scene_msg);
+
+  ik_options_.return_approximate_solution = use_approximate_solution;
 }
 
 std::vector<std::vector<double>> MoveItIKSolver::solveIK(const Eigen::Isometry3d& target,
@@ -65,7 +67,7 @@ std::vector<std::vector<double>> MoveItIKSolver::solveIK(const Eigen::Isometry3d
   state.setJointGroupPositions(jmg_, seed_subset);
   state.update();
 
-  if (state.setFromIK(jmg_, target, 0.0, std::bind(&MoveItIKSolver::isIKSolutionValid, this, _1, _2, _3)))
+  if (state.setFromIK(jmg_, target, 0.0, std::bind(&MoveItIKSolver::isIKSolutionValid, this, _1, _2, _3), ik_options_))
   {
     std::vector<double> solution;
     state.copyJointGroupPositions(jmg_, solution);
@@ -122,12 +124,13 @@ reach::IKSolver::ConstPtr MoveItIKSolverFactory::create(const YAML::Node& config
 {
   auto planning_group = reach::get<std::string>(config, "planning_group");
   auto dist_threshold = reach::get<double>(config, "distance_threshold");
+  auto use_approximate_solution = reach::get<bool>(config, "use_approximate_solution");
 
   moveit::core::RobotModelConstPtr model = moveit::planning_interface::getSharedRobotModel(reach_ros::utils::getNodeInstance(), "robot_description");
   if (!model)
     throw std::runtime_error("Failed to initialize robot model pointer");
 
-  auto ik_solver = std::make_shared<MoveItIKSolver>(model, planning_group, dist_threshold);
+  auto ik_solver = std::make_shared<MoveItIKSolver>(model, planning_group, dist_threshold, use_approximate_solution);
 
   // Optionally add a collision mesh
   const std::string collision_mesh_filename_key = "collision_mesh_filename";
@@ -155,8 +158,8 @@ reach::IKSolver::ConstPtr MoveItIKSolverFactory::create(const YAML::Node& config
 
 DiscretizedMoveItIKSolver::DiscretizedMoveItIKSolver(moveit::core::RobotModelConstPtr model,
                                                      const std::string& planning_group, double dist_threshold,
-                                                     double dt)
-  : MoveItIKSolver(model, planning_group, dist_threshold), dt_(dt)
+                                                     bool use_approximate_solution, double dt)
+  : MoveItIKSolver(model, planning_group, dist_threshold, use_approximate_solution), dt_(dt)
 {
 }
 
@@ -185,6 +188,7 @@ reach::IKSolver::ConstPtr DiscretizedMoveItIKSolverFactory::create(const YAML::N
 {
   auto planning_group = reach::get<std::string>(config, "planning_group");
   auto dist_threshold = reach::get<double>(config, "distance_threshold");
+  auto use_approximate_solution = reach::get<bool>(config, "use_approximate_solution");
 
   moveit::core::RobotModelConstPtr model = moveit::planning_interface::getSharedRobotModel(reach_ros::utils::getNodeInstance(), "robot_description");
   if (!model)
@@ -198,7 +202,7 @@ reach::IKSolver::ConstPtr DiscretizedMoveItIKSolverFactory::create(const YAML::N
   }
   dt = clamped_dt;
 
-  auto ik_solver = std::make_shared<DiscretizedMoveItIKSolver>(model, planning_group, dist_threshold, dt);
+  auto ik_solver = std::make_shared<DiscretizedMoveItIKSolver>(model, planning_group, dist_threshold, use_approximate_solution, dt);
 
   // Optionally add a collision mesh
   const std::string collision_mesh_filename_key = "collision_mesh_filename";

@@ -20,8 +20,9 @@
 #include <rclcpp/publisher.hpp>
 #include <vector>
 #include <moveit_msgs/msg/planning_scene.hpp>
- #include <functional>
- 
+#include <moveit/kinematics_base/kinematics_base.h>
+#include <functional>
+
 namespace moveit
 {
 namespace core
@@ -46,7 +47,8 @@ namespace ik
 class MoveItIKSolver : public reach::IKSolver
 {
 public:
-  MoveItIKSolver(moveit::core::RobotModelConstPtr model, const std::string& planning_group, double dist_threshold);
+  MoveItIKSolver(moveit::core::RobotModelConstPtr model, const std::string& planning_group, double dist_threshold,
+                 bool use_approximate_solution);
 
   std::vector<std::vector<double>> solveIK(const Eigen::Isometry3d& target,
                                            const std::map<std::string, double>& seed) const override;
@@ -64,6 +66,7 @@ protected:
   moveit::core::RobotModelConstPtr model_;
   const moveit::core::JointModelGroup* jmg_;
   const double distance_threshold_;
+  kinematics::KinematicsQueryOptions ik_options_;
 
   planning_scene::PlanningScenePtr scene_;
   rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr scene_pub_;
@@ -80,7 +83,7 @@ class DiscretizedMoveItIKSolver : public MoveItIKSolver
 {
 public:
   DiscretizedMoveItIKSolver(moveit::core::RobotModelConstPtr model, const std::string& planning_group,
-                            double dist_threshold, double dt);
+                            double dist_threshold, bool use_approximate_solution, double dt);
 
   std::vector<std::vector<double>> solveIK(const Eigen::Isometry3d& target,
                                            const std::map<std::string, double>& seed) const override;
