@@ -27,7 +27,7 @@ class MultiplicativeEvaluator : public Evaluator
 public:
   MultiplicativeEvaluator(std::vector<Evaluator::ConstPtr> evaluators);
 
-  double calculateScore(const std::map<std::string, double>& pose) const override;
+  double calculateScore(const std::map<std::string, double>& pose, const Eigen::Isometry3d& target) const override;
 
 private:
   std::vector<Evaluator::ConstPtr> evaluators_;

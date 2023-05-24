@@ -2,7 +2,7 @@
 
 namespace reach
 {
-double NoOpEvaluator::calculateScore(const std::map<std::string, double>&) const
+double NoOpEvaluator::calculateScore(const std::map<std::string, double>&, const Eigen::Isometry3d&) const
 {
   return 0.0;
 }

@@ -21,6 +21,8 @@
 #include <memory>
 #include <vector>
 
+#include <Eigen/Dense>
+
 namespace YAML
 {
 class Node;
@@ -31,8 +33,12 @@ namespace boost
 {
 namespace python
 {
-class dict;
+namespace numpy
+{
+class ndarray;
 }
+class dict;
+}  // namespace python
 }  // namespace boost
 #endif
 
@@ -53,10 +59,10 @@ struct Evaluator
    * @brief Calculates a score representing the "fitness" (i.e., quality of reachability) for a given robot pose.
    * @details The better the reachability of the pose, the higher the score should be.
    */
-  virtual double calculateScore(const std::map<std::string, double>& pose) const = 0;
+  virtual double calculateScore(const std::map<std::string, double>& pose, const Eigen::Isometry3d& target) const = 0;
 
 #ifdef BUILD_PYTHON
-  double calculateScore(const boost::python::dict& pose) const;
+  double calculateScore(const boost::python::dict& pose, const boost::python::numpy::ndarray& target) const;
 #endif
 };
 

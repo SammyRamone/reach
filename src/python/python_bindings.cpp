@@ -180,8 +180,9 @@ BOOST_PYTHON_MODULE(MODULE_NAME)
 
   // Wrap the Evaluator
   {
-    double (Evaluator::*calculateScoreCpp)(const std::map<std::string, double>&) const = &Evaluator::calculateScore;
-    double (Evaluator::*calculateScorePython)(const bp::dict&) const;
+    double (Evaluator::*calculateScoreCpp)(const std::map<std::string, double>&, const Eigen::Isometry3d& target)
+        const = &Evaluator::calculateScore;
+    double (Evaluator::*calculateScorePython)(const bp::dict&, const boost::python::numpy::ndarray& target) const;
     bp::class_<EvaluatorPython, boost::noncopyable>("Evaluator")
         .def("calculateScore", bp::pure_virtual(calculateScoreCpp))
         .def("calculateScore", calculateScorePython);

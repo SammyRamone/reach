@@ -30,7 +30,7 @@ std::tuple<std::vector<double>, double> evaluateIK(const Eigen::Isometry3d& targ
 
   for (std::size_t i = 0; i < poses.size(); ++i)
   {
-    double score = evaluator->calculateScore(zip(joint_names, poses[i]));
+    double score = evaluator->calculateScore(zip(joint_names, poses[i]), target);
     if (score > best_score)
     {
       best_score = score;

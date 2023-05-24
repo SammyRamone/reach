@@ -26,12 +26,12 @@ MultiplicativeEvaluator::MultiplicativeEvaluator(std::vector<Evaluator::ConstPtr
 {
 }
 
-double MultiplicativeEvaluator::calculateScore(const std::map<std::string, double>& pose) const
+double MultiplicativeEvaluator::calculateScore(const std::map<std::string, double>& pose, const Eigen::Isometry3d& target) const
 {
   double score = 1.0;
   for (const Evaluator::ConstPtr& eval : evaluators_)
   {
-    score *= eval->calculateScore(pose);
+    score *= eval->calculateScore(pose, target);
   }
   return score;
 }

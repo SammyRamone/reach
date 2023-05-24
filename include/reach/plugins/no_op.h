@@ -26,7 +26,7 @@ namespace reach
 {
 struct NoOpEvaluator : public Evaluator
 {
-  double calculateScore(const std::map<std::string, double>&) const override;
+  double calculateScore(const std::map<std::string, double>&, const Eigen::Isometry3d&) const override;
 };
 
 struct NoOpEvaluatorFactory : public EvaluatorFactory

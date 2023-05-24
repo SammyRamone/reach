@@ -4,15 +4,16 @@
 #include "utils.hpp"
 
 #include <boost/python.hpp>
+#include <boost/python/numpy.hpp>
 #include <yaml-cpp/yaml.h>
 
 namespace bp = boost::python;
 
 namespace reach
 {
-double Evaluator::calculateScore(const bp::dict& pose) const
+double Evaluator::calculateScore(const bp::dict& pose, const boost::python::numpy::ndarray& target) const
 {
-  return calculateScore(toMap<std::string, double>(pose));
+  return calculateScore(toMap<std::string, double>(pose), toEigen(target));
 }
 
 Evaluator::ConstPtr EvaluatorFactory::create(const bp::dict& pyyaml_config) const
@@ -22,16 +23,16 @@ Evaluator::ConstPtr EvaluatorFactory::create(const bp::dict& pyyaml_config) cons
 
 struct EvaluatorPython : Evaluator, boost::python::wrapper<Evaluator>
 {
-  double calculateScore(const std::map<std::string, double>& map) const override
+  double calculateScore(const std::map<std::string, double>& map, const Eigen::Isometry3d& target) const override
   {
-    auto fn = [this, &map]() -> double {
+    auto fn = [this, &map, &target]() -> double {
       bp::dict dictionary;
       for (auto pair : map)
       {
         dictionary[pair.first] = pair.second;
       }
 
-      double score = this->get_override("calculateScore")(dictionary);
+      double score = this->get_override("calculateScore")(dictionary, fromEigen(target));
 
       return score;
     };
