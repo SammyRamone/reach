@@ -128,14 +128,15 @@ bp::list normalizeScoresPython(const ReachResult& result, bool use_full_range)
   return out;
 }
 
-np::ndarray computeHeatMapColorsPython1(const ReachResult& result, bool use_full_color_range, float hue_low_score,
-                                        float hue_high_score)
+np::ndarray computeHeatMapColorsPython1(const ReachResult& result, bool use_full_color_range,
+                                        float hue_low_score = 270.0f, float hue_high_score = 0.0f)
 {
   return fromEigen<float, Eigen::Dynamic, 3>(
       computeHeatMapColors(result, use_full_color_range, hue_low_score, hue_high_score));
 }
 
-np::ndarray computeHeatMapColorsPython2(const bp::list& scores, float hue_low_score, float hue_high_score)
+np::ndarray computeHeatMapColorsPython2(const bp::list& scores, float hue_low_score = 270.0f,
+                                        float hue_high_score = 0.0f)
 {
   std::vector<float> scores_v;
   scores_v.reserve(bp::len(scores));
@@ -144,6 +145,9 @@ np::ndarray computeHeatMapColorsPython2(const bp::list& scores, float hue_low_sc
 
   return fromEigen<float, Eigen::Dynamic, 3>(computeHeatMapColors(scores_v, hue_low_score, hue_high_score));
 }
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(compute_heat_map_colors_python1_overloads, computeHeatMapColorsPython1, 2, 4)
+BOOST_PYTHON_FUNCTION_OVERLOADS(compute_heat_map_colors_python2_overloads, computeHeatMapColorsPython2, 1, 3)
 
 BOOST_PYTHON_MODULE(MODULE_NAME)
 {
@@ -295,8 +299,13 @@ BOOST_PYTHON_MODULE(MODULE_NAME)
     bp::def("load", &load);
     bp::def("calculateResults", &calculateResults);
     bp::def("normalizeScores", &normalizeScoresPython);
-    bp::def("computeHeatMapColors", &computeHeatMapColorsPython1);
-    bp::def("computeHeatMapColors", &computeHeatMapColorsPython2);
+    bp::def(
+        "computeHeatMapColors", &computeHeatMapColorsPython1,
+        compute_heat_map_colors_python1_overloads((bp::arg("results"), bp::arg("use_full_color_range"),
+                                                   bp::arg("hue_low_score") = 270.0, bp::arg("hue_high_score") = 0.0)));
+    bp::def("computeHeatMapColors", &computeHeatMapColorsPython2,
+            compute_heat_map_colors_python2_overloads(
+                (bp::arg("scores"), bp::arg("hue_low_score") = 270.0, bp::arg("hue_high_score") = 0.0)));
   }
 
   // Register shared_ptrs

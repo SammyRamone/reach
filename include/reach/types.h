@@ -124,7 +124,8 @@ std::vector<float> normalizeScores(const ReachResult& result, bool use_full_rang
  * @param scores Vector of reach target scores in the range [0, 1]
  * @return An array of RGB colors on [0, 1] for each channel
  */
-Eigen::MatrixX3f computeHeatMapColors(const std::vector<float>& scores, float hue_low_score, float hue_high_score);
+Eigen::MatrixX3f computeHeatMapColors(const std::vector<float>& scores, float hue_low_score = 270.0f,
+                                      float hue_high_score = 0.0f);
 
 /**
  * @brief Computes heat map colors for the reach targets in a reach study result
@@ -134,8 +135,8 @@ Eigen::MatrixX3f computeHeatMapColors(const std::vector<float>& scores, float hu
  * before colorization
  * @return An array of RGB colors on [0, 1] for each channel
  */
-Eigen::MatrixX3f computeHeatMapColors(const ReachResult& result, bool use_full_color_range, float hue_low_score,
-                                      float hue_high_score);
+Eigen::MatrixX3f computeHeatMapColors(const ReachResult& result, bool use_full_color_range,
+                                      float hue_low_score = 270.0f, float hue_high_score = 0.0f);
 
 class ReachDatabase
 {
@@ -145,8 +146,8 @@ public:
 
   bool operator==(const ReachDatabase& rhs) const;
   ReachResultSummary calculateResults() const;
-  Eigen::MatrixX3f computeHeatMapColors(bool use_full_color_range = false, float hue_low_score = 270.0,
-                                        float hue_high_score = 0.0) const;
+  Eigen::MatrixX3f computeHeatMapColors(bool use_full_color_range = false, float hue_low_score = 270.0f,
+                                        float hue_high_score = 0.0f) const;
 
 private:
   friend class boost::serialization::access;

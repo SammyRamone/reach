@@ -2,6 +2,40 @@
 Changelog for package reach_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.6.0 (2023-10-04)
+------------------
+* Add seed state checks (`#66 <https://github.com/marip8/reach/issues/66>`_)
+  * Added utility from reach_ros for getting subset of joint state
+  * Added check to ensure seed state parameter is set correctly
+  * Updated function name
+  * Run format jobs on 20.04
+  * Clang format
+* Contributors: Michael Ripperger
+
+1.5.3 (2023-09-29)
+------------------
+* Updated links in README (`#65 <https://github.com/marip8/reach/issues/65>`_)
+* Update docs (`#64 <https://github.com/marip8/reach/issues/64>`_)
+  * Updated flow chart
+  * Push docker image if ref_type is a tag
+  * Update AFTER_SCRIPT
+* Contributors: Michael Ripperger
+
+1.5.2 (2023-09-07)
+------------------
+* Updated install of python module (`#63 <https://github.com/marip8/reach/issues/63>`_)
+* Contributors: Michael Ripperger
+
+1.5.1 (2023-08-16)
+------------------
+* fix bools in yaml in Python (`#59 <https://github.com/marip8/reach/issues/59>`_)
+* Contributors: Marc Bestmann
+
+1.5.0 (2023-07-28)
+------------------
+* Added ability to specify heat map color range (`#58 <https://github.com/marip8/reach/issues/58>`_)
+* Contributors: Marc Bestmann
+
 1.4.0 (2023-07-13)
 ------------------
 * Exposed relevant compile definitions for plugins to the Python interface (`#57 <https://github.com/marip8/reach/issues/57>`_)
